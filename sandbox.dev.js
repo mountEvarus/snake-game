@@ -10,6 +10,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 var head = document.querySelector(".circle");
 var gameBox = document.querySelector(".screen");
 var gameScore = document.querySelector(".scoreboard");
+var snakePic = document.querySelector(".snake-head");
 var gameIsRunning = true;
 var upCheck = true;
 var downCheck = false;
@@ -26,6 +27,7 @@ var upFunction = function upFunction() {
     var headPosition = head.getBoundingClientRect();
     var headUp = headPosition.top - 1 + "px";
     head.style.top = headUp;
+    snakePic.style.transform = "rotate(-90deg)";
 
     if (snakeBodyArr.length > 0) {
       for (var i = 0; i < snakeBodyArr.length; i++) {
@@ -71,6 +73,7 @@ var leftFunction = function leftFunction() {
     var headPosition = head.getBoundingClientRect();
     var headLeft = headPosition.left - 1 + "px";
     head.style.left = headLeft;
+    snakePic.style.transform = "rotate(-180deg)";
 
     if (snakeBodyArr.length > 0) {
       for (var i = 0; i < snakeBodyArr.length; i++) {
@@ -116,6 +119,7 @@ var rightFunction = function rightFunction() {
     var headPosition = head.getBoundingClientRect();
     var headRight = headPosition.left + 1 + "px";
     head.style.left = headRight;
+    snakePic.style.transform = "rotate(0deg)";
 
     if (snakeBodyArr.length > 0) {
       for (var i = 0; i < snakeBodyArr.length; i++) {
@@ -161,6 +165,7 @@ var downFunction = function downFunction() {
     var headPosition = head.getBoundingClientRect();
     var headDown = headPosition.top + 1 + "px";
     head.style.top = headDown;
+    snakePic.style.transform = "rotate(90deg)";
 
     if (snakeBodyArr.length > 0) {
       for (var i = 0; i < snakeBodyArr.length; i++) {

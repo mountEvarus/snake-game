@@ -25,6 +25,11 @@ main {
         position: absolute;
         left: calc(50% - 15px);
         top: calc(50% - 15px);
+
+        .snake-head {
+            width: 30px;
+            height: 30px;
+        }
     }
     .screen {
         width: 90%;

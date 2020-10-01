@@ -5,6 +5,7 @@ import SnakeBodypart from "./SnakeBodyPart.js";
 const head = document.querySelector(".circle");
 const gameBox = document.querySelector(".screen");
 const gameScore = document.querySelector(".scoreboard");
+const snakePic = document.querySelector(".snake-head");
 let gameIsRunning = true;
 let upCheck = true;
 let downCheck = false;
@@ -22,6 +23,7 @@ const upFunction = () => {
         const headPosition = head.getBoundingClientRect();
         const headUp = headPosition.top - 1  + "px";
         head.style.top = headUp;
+        snakePic.style.transform = "rotate(-90deg)";
 
         if(snakeBodyArr.length > 0) {
             for (let i = 0; i < snakeBodyArr.length; i++) {
@@ -65,6 +67,7 @@ const leftFunction = () => {
         const headPosition = head.getBoundingClientRect();
         const headLeft = headPosition.left - 1 + "px";
         head.style.left = headLeft;
+        snakePic.style.transform = "rotate(-180deg)";
 
         if(snakeBodyArr.length > 0) {
             for (let i = 0; i < snakeBodyArr.length; i++) {
@@ -108,6 +111,7 @@ const rightFunction = () => {
         const headPosition = head.getBoundingClientRect();
         const headRight = headPosition.left + 1 + "px";
         head.style.left = headRight;
+        snakePic.style.transform = "rotate(0deg)";
         
         if(snakeBodyArr.length > 0) {
             for (let i = 0; i < snakeBodyArr.length; i++) {
@@ -151,6 +155,7 @@ const downFunction = () => {
         const headPosition = head.getBoundingClientRect();
         const headDown = headPosition.top + 1 + "px";
         head.style.top = headDown;
+        snakePic.style.transform = "rotate(90deg)";
 
         if(snakeBodyArr.length > 0) {
             for (let i = 0; i < snakeBodyArr.length; i++) {
