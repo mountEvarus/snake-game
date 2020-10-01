@@ -196,7 +196,7 @@ const rightFunction = () => {
                     } else if(snakeBodyPart.yPos < previousBodyPart.yPos && snakeBodyPart.xPos <= previousBodyPart.xPos){
                         snakeBodyPart.yCoordinate = snakeBodyPart.yPos + 1;
                         snakePart.style.top = `${snakeBodyPart.yPos}`;
-                    } else console.log("ERROR - Left lesser");
+                    } else console.log("ERROR - Right lesser");
                 }
                 previousBodyPart = snakeBodyPart;
             }
@@ -264,44 +264,26 @@ const checkGameStatus = () => {
         const leftBound = gameBox.getBoundingClientRect().left;
         
         if(headTop <= topBound) {
-            gameIsRunning = false;
-            gameBox.innerHTML = `<div class="game-info"></div>`;
-            document.querySelector(".game-info").style.opacity = "0.8";
-            document.querySelector(".game-info").innerHTML = `<p>Game Over!</p>`;
-            restartButton.style.display = "block";
-            head.style.top = "calc(50% - 15px)";
-            head.style.left = "calc(50% - 15px)";
-            snakeBodyArr = [];
+            gameOver();
         } else if(headRight >= rightBound) {
-            gameIsRunning = false;
-            gameBox.innerHTML = `<div class="game-info"></div>`;
-            document.querySelector(".game-info").style.opacity = "0.8";
-            document.querySelector(".game-info").innerHTML = `<p>Game Over!</p>`;
-            restartButton.style.display = "block";
-            head.style.top = "calc(50% - 15px)";
-            head.style.left = "calc(50% - 15px)";
-            snakeBodyArr = [];
+            gameOver();
         } else if(headBottom >= bottomBound) {
-            gameIsRunning = false;
-            gameBox.innerHTML = `<div class="game-info"></div>`;
-            document.querySelector(".game-info").style.opacity = "0.8";
-            document.querySelector(".game-info").innerHTML = `<p>Game Over!</p>`;
-            restartButton.style.display = "block";
-            head.style.top = "calc(50% - 15px)";
-            head.style.left = "calc(50% - 15px)";
-            snakeBodyArr = [];
+            gameOver();
         } else if(headLeft <= leftBound) {
-            gameIsRunning = false;
-            gameBox.innerHTML = `<div class="game-info"></div>`;
-            document.querySelector(".game-info").style.opacity = "0.8";
-            document.querySelector(".game-info").innerHTML = `<p>Game Over!</p>`;
-            restartButton.style.display = "block";
-            head.style.top = "calc(50% - 15px)";
-            head.style.left = "calc(50% - 15px)";
-            snakeBodyArr = [];
+            gameOver();
         } else;
     }
     
+}
+const gameOver = () => {
+    gameIsRunning = false;
+    gameBox.innerHTML = `<div class="game-info"></div>`;
+    document.querySelector(".game-info").style.opacity = "0.8";
+    document.querySelector(".game-info").innerHTML = `<p>Game Over!</p>`;
+    restartButton.style.display = "block";
+    head.style.top = "calc(50% - 15px)";
+    head.style.left = "calc(50% - 15px)";
+    snakeBodyArr = [];
 }
 const fruitGenerator = () => {
     const topBound = gameBox.getBoundingClientRect().top;
@@ -401,8 +383,6 @@ restartButton.addEventListener("click", countdownStart);
 //  ====================================================================================================================
 //  ====================================================================================================================
 //  ====================================================================================================================
-
-// Pseudo code for advanced movement.
 
 // if press w:
     // move head up
