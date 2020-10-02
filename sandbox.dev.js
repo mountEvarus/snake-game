@@ -1,8 +1,8 @@
 "use strict";
 
-var _Fruit = _interopRequireDefault(require("./Fruit.js"));
+var _Fruit = _interopRequireDefault(require("./assets/classes/Fruit.js"));
 
-var _SnakeBodyPart = _interopRequireDefault(require("./SnakeBodyPart.js"));
+var _SnakeBodyPart = _interopRequireDefault(require("./assets/classes/SnakeBodyPart.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -22,9 +22,9 @@ var leftCheck = false;
 var score = 0;
 var snack = new _Fruit["default"](0, 0);
 var snakeBodyArr = [];
-var previousBodyPart = 0;
 var bodyCount = 0;
-var count; // functions.
+var count;
+var previousPartMovement = "up"; // functions.
 
 var countdownStart = function countdownStart() {
   score = 0;
@@ -62,210 +62,201 @@ var gameStart = function gameStart() {
   }
 };
 
-var upFunction = function upFunction() {
-  if (gameIsRunning && upCheck) {
-    var headPosition = head.getBoundingClientRect();
+var gameRunning = function gameRunning() {
+  movementFunction();
+  fruitGrabbingChecker();
+  checkGameStatus();
+};
+
+var movementFunction = function movementFunction() {
+  if (gameIsRunning) {
+    primaryCheck();
+
+    if (snakeBodyArr.length > 0) {
+      var headPosition = head.getBoundingClientRect();
+      var previousBodyPart = 0;
+
+      for (var i = 0; i < snakeBodyArr.length; i++) {
+        var snakeBodyPart = snakeBodyArr[i];
+        var snakeHTML = document.querySelector(".snake-body-part-".concat(i));
+
+        if (i === 0) {
+          if (snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos <= headPosition.top + 31 && previousPartMovement == "up") {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "down";
+          } else if (snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos > headPosition.top + 31 && previousPartMovement == "up") {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "up";
+          } else if (snakeBodyPart.xPos > headPosition.left && snakeBodyPart.yPos == headPosition.top && (previousPartMovement == "up" || previousPartMovement == "down")) {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "left";
+          } else if (snakeBodyPart.xPos < headPosition.left && snakeBodyPart.yPos == headPosition.top && (previousPartMovement == "up" || previousPartMovement == "down")) {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "right";
+          } else if (snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos >= headPosition.top - 31 && previousPartMovement == "down") {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "up";
+          } else if (snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos < headPosition.top - 31 && previousPartMovement == "down") {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "down";
+          } else if (snakeBodyPart.xPos >= headPosition.left + 31 && snakeBodyPart.yPos == headPosition.top && previousPartMovement == "left") {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "left";
+          } else if (snakeBodyPart.xPos < headPosition.left + 31 && snakeBodyPart.yPos == headPosition.top && previousPartMovement == "left") {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "right";
+          } else if (snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos > headPosition.top && (previousPartMovement == "left" || previousPartMovement == "right")) {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "up";
+          } else if (snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos < headPosition.top && (previousPartMovement == "left" || previousPartMovement == "right")) {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "down";
+          } else if (snakeBodyPart.xPos > headPosition.left - 31 && snakeBodyPart.yPos == headPosition.top && previousPartMovement == "right") {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "left";
+          } else if (snakeBodyPart.xPos <= headPosition.left + 31 && snakeBodyPart.yPos == headPosition.top && previousPartMovement == "right") {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "right";
+          } else if (snakeBodyPart.xPos < headPosition.left && (snakeBodyPart.yPos < headPosition.top || snakeBodyPart.yPos > headPosition.top) && (previousPartMovement == "up" || previousPartMovement == "down")) {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "right";
+          } else if (snakeBodyPart.xPos > headPosition.left && (snakeBodyPart.yPos < headPosition.top || snakeBodyPart.yPos > headPosition.top) && (previousPartMovement == "up" || previousPartMovement == "down")) {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "left";
+          } else if ((snakeBodyPart.xPos < headPosition.left || snakeBodyPart.xPos > headPosition.left) && snakeBodyPart.yPos < headPosition.top && (previousPartMovement == "left" || previousPartMovement == "right")) {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "down";
+          } else if ((snakeBodyPart.xPos < headPosition.left || snakeBodyPart.xPos > headPosition.left) && snakeBodyPart.yPos > headPosition.top && (previousPartMovement == "left" || previousPartMovement == "right")) {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "up";
+          }
+        } else {
+          if (snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos <= previousBodyPart.yPos && previousPartMovement == "up") {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "down";
+          } else if (snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos > previousBodyPart.yPos && previousPartMovement == "up") {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "up";
+          } else if (snakeBodyPart.xPos > previousBodyPart.xPos && snakeBodyPart.yPos == previousBodyPart.yPos && (previousPartMovement == "up" || previousPartMovement == "down")) {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "left";
+          } else if (snakeBodyPart.xPos < previousBodyPart.xPos && snakeBodyPart.yPos == previousBodyPart.yPos && (previousPartMovement == "up" || previousPartMovement == "down")) {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "right";
+          } else if (snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos >= previousBodyPart.yPos - 31 && previousPartMovement == "down") {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "up";
+          } else if (snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos < previousBodyPart.yPos - 31 && previousPartMovement == "down") {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "down";
+          } else if (snakeBodyPart.xPos >= previousBodyPart.xPos + 31 && snakeBodyPart.yPos == previousBodyPart.yPos && previousPartMovement == "left") {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "left";
+          } else if (snakeBodyPart.xPos < previousBodyPart.xPos + 31 && snakeBodyPart.yPos == previousBodyPart.yPos && previousPartMovement == "left") {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "right";
+          } else if (snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos > previousBodyPart.yPos && (previousPartMovement == "left" || previousPartMovement == "right")) {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "up";
+          } else if (snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos < previousBodyPart.yPos && (previousPartMovement == "left" || previousPartMovement == "right")) {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "down";
+          } else if (snakeBodyPart.xPos > previousBodyPart.xPos - 31 && snakeBodyPart.yPos == previousBodyPart.yPos && previousPartMovement == "right") {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "left";
+          } else if (snakeBodyPart.xPos <= previousBodyPart.xPos + 31 && snakeBodyPart.yPos == previousBodyPart.yPos && previousPartMovement == "right") {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "right";
+          } else if (snakeBodyPart.xPos < previousBodyPart.xPos && (snakeBodyPart.yPos < previousBodyPart.yPos || snakeBodyPart.yPos > previousBodyPart.yPos) && (previousPartMovement == "up" || previousPartMovement == "down")) {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "right";
+          } else if (snakeBodyPart.xPos > previousBodyPart.xPos && (snakeBodyPart.yPos < previousBodyPart.yPos || snakeBodyPart.yPos > previousBodyPart.yPos) && (previousPartMovement == "up" || previousPartMovement == "down")) {
+            snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+            snakeHTML.style.left = "".concat(snakeBodyPart.xPos);
+            previousPartMovement = "left";
+          } else if ((snakeBodyPart.xPos < previousBodyPart.xPos || snakeBodyPart.xPos > previousBodyPart.xPos) && snakeBodyPart.yPos < previousBodyPart.yPos && (previousPartMovement == "left" || previousPartMovement == "right")) {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "down";
+          } else if ((snakeBodyPart.xPos < previousBodyPart.xPos || snakeBodyPart.xPos > previousBodyPart.xPos) && snakeBodyPart.yPos > previousBodyPart.yPos && (previousPartMovement == "left" || previousPartMovement == "right")) {
+            snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+            snakeHTML.style.top = "".concat(snakeBodyPart.yPos);
+            previousPartMovement = "up";
+          }
+
+          checkSepukuStatus(headPosition, snakeBodyArr);
+        }
+
+        previousBodyPart = snakeBodyPart;
+      }
+    }
+  }
+};
+
+var primaryCheck = function primaryCheck() {
+  previousPartMovement;
+  var headPosition = head.getBoundingClientRect();
+
+  if (upCheck) {
     var headUp = headPosition.top - 1 + "px";
     head.style.top = headUp;
     snakePic.style.transform = "rotate(-90deg)";
-
-    if (snakeBodyArr.length > 0) {
-      for (var i = 0; i < snakeBodyArr.length; i++) {
-        var snakePart = document.querySelector(".snake-body-part-".concat(i));
-        var snakeBodyPart = snakeBodyArr[i];
-
-        if (snakeBodyPart == snakeBodyArr[0]) {
-          if (snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos > headPosition.top) {
-            snakeBodyPart.xCoordinate = headPosition.left;
-            snakeBodyPart.yCoordinate = headPosition.top + 31;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos, "px");
-            snakePart.style.left = "".concat(snakeBodyPart.xPos, "px");
-          } else if (snakeBodyPart.xPos == headPosition.left || snakeBodyPart.yPos < headPosition.top) {
-            snakeBodyPart.yCoordinate = snakeBodyPart.yPos + 1;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos, "px");
-          } else if (snakeBodyPart.xPos > headPosition.left && snakeBodyPart.yPos >= headPosition.top) {
-            snakeBodyPart.xCoordinate = snakeBodyPart.xPos - 1;
-            snakePart.style.left = "".concat(snakeBodyPart.xPos);
-          } else if (snakeBodyPart.xPos < headPosition.left && snakeBodyPart.yPos >= headPosition.top) {
-            snakeBodyPart.xCoordinate = snakeBodyPart.xPos + 1;
-            snakePart.style.left = "".concat(snakeBodyPart.xPos);
-          } else console.log("ERROR - Up prime");
-        } else {
-          if (snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos > previousBodyPart.yPos) {
-            snakeBodyPart.xCoordinate = previousBodyPart.xPos;
-            snakeBodyPart.yCoordinate = previousBodyPart.yPos + 31;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos, "px");
-            snakePart.style.left = "".concat(snakeBodyPart.xPos, "px");
-          } else if (snakeBodyPart.xPos == previousBodyPart.xPos || snakeBodyPart.yPos < previousBodyPart.yPos) {
-            snakeBodyPart.yCoordinate = snakeBodyPart.yPos + 1;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos, "px");
-          } else if (snakeBodyPart.xPos > previousBodyPart.xPos && snakeBodyPart.yPos >= previousBodyPart.yPos) {
-            snakeBodyPart.xCoordinate = snakeBodyPart.xPos - 1;
-            snakePart.style.left = "".concat(snakeBodyPart.xPos);
-          } else if (snakeBodyPart.xPos < previousBodyPart.xPos && snakeBodyPart.yPos >= previousBodyPart.yPos) {
-            snakeBodyPart.xCoordinate = snakeBodyPart.xPos + 1;
-            snakePart.style.left = "".concat(snakeBodyPart.xPos);
-          } else console.log("ERROR - Up lesser");
-        }
-
-        previousBodyPart = snakeBodyPart;
-      }
-    }
-  }
-};
-
-var leftFunction = function leftFunction() {
-  if (gameIsRunning && leftCheck) {
-    var headPosition = head.getBoundingClientRect();
+    previousPartMovement = "up";
+  } else if (leftCheck) {
     var headLeft = headPosition.left - 1 + "px";
     head.style.left = headLeft;
     snakePic.style.transform = "rotate(-180deg)";
-
-    if (snakeBodyArr.length > 0) {
-      for (var i = 0; i < snakeBodyArr.length; i++) {
-        var snakePart = document.querySelector(".snake-body-part-".concat(i));
-        var snakeBodyPart = snakeBodyArr[i];
-
-        if (snakeBodyPart == snakeBodyArr[0]) {
-          if (snakeBodyPart.yPos == headPosition.top && snakeBodyPart.xPos > headPosition.left) {
-            snakeBodyPart.xCoordinate = headPosition.left + 31;
-            snakeBodyPart.yCoordinate = headPosition.top;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos, "px");
-            snakePart.style.left = "".concat(snakeBodyPart.xPos, "px");
-          } else if (snakeBodyPart.yPos == headPosition.top || snakeBodyPart.xPos < headPosition.left) {
-            snakeBodyPart.xCoordinate = snakeBodyPart.xPos + 1;
-            snakePart.style.left = "".concat(snakeBodyPart.xPos, "px");
-          } else if (snakeBodyPart.yPos > headPosition.top && snakeBodyPart.xPos >= headPosition.left) {
-            snakeBodyPart.yCoordinate = snakeBodyPart.yPos - 1;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos);
-          } else if (snakeBodyPart.yPos < headPosition.top && snakeBodyPart.xPos >= headPosition.left) {
-            snakeBodyPart.yCoordinate = snakeBodyPart.yPos + 1;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos);
-          } else console.log("ERROR - Left prime");
-        } else {
-          if (snakeBodyPart.yPos == previousBodyPart.yPos && snakeBodyPart.xPos > previousBodyPart.xPos) {
-            snakeBodyPart.xCoordinate = previousBodyPart.xPos + 31;
-            snakeBodyPart.yCoordinate = previousBodyPart.yPos;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos, "px");
-            snakePart.style.left = "".concat(snakeBodyPart.xPos, "px");
-          } else if (snakeBodyPart.yPos == previousBodyPart.yPos || snakeBodyPart.xPos < previousBodyPart.xPos) {
-            snakeBodyPart.xCoordinate = snakeBodyPart.xPos + 1;
-            snakePart.style.left = "".concat(snakeBodyPart.xPos, "px");
-          } else if (snakeBodyPart.yPos > previousBodyPart.yPos && snakeBodyPart.xPos >= previousBodyPart.xPos) {
-            snakeBodyPart.yCoordinate = snakeBodyPart.yPos - 1;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos);
-          } else if (snakeBodyPart.yPos < previousBodyPart.yPos && snakeBodyPart.xPos >= previousBodyPart.xPos) {
-            snakeBodyPart.yCoordinate = snakeBodyPart.yPos + 1;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos);
-          } else console.log("ERROR - Left lesser");
-        }
-
-        previousBodyPart = snakeBodyPart;
-      }
-    }
-  }
-};
-
-var rightFunction = function rightFunction() {
-  if (gameIsRunning && rightCheck) {
-    var headPosition = head.getBoundingClientRect();
+    previousPartMovement = "left";
+  } else if (rightCheck) {
     var headRight = headPosition.left + 1 + "px";
     head.style.left = headRight;
     snakePic.style.transform = "rotate(0deg)";
-
-    if (snakeBodyArr.length > 0) {
-      for (var i = 0; i < snakeBodyArr.length; i++) {
-        var snakePart = document.querySelector(".snake-body-part-".concat(i));
-        var snakeBodyPart = snakeBodyArr[i];
-
-        if (snakeBodyPart == snakeBodyArr[0]) {
-          if (snakeBodyPart.yPos == headPosition.top && snakeBodyPart.xPos < headPosition.left) {
-            snakeBodyPart.xCoordinate = headPosition.left - 31;
-            snakeBodyPart.yCoordinate = headPosition.top;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos, "px");
-            snakePart.style.left = "".concat(snakeBodyPart.xPos, "px");
-          } else if (snakeBodyPart.yPos == headPosition.top || snakeBodyPart.xPos > headPosition.left) {
-            snakeBodyPart.xCoordinate = snakeBodyPart.xPos - 1;
-            snakePart.style.left = "".concat(snakeBodyPart.xPos, "px");
-          } else if (snakeBodyPart.yPos > headPosition.top && snakeBodyPart.xPos <= headPosition.left) {
-            snakeBodyPart.yCoordinate = snakeBodyPart.yPos - 1;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos);
-          } else if (snakeBodyPart.yPos < headPosition.top && snakeBodyPart.xPos <= headPosition.left) {
-            snakeBodyPart.yCoordinate = snakeBodyPart.yPos + 1;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos);
-          } else console.log("ERROR - Right prime");
-        } else {
-          if (snakeBodyPart.yPos == previousBodyPart.yPos && snakeBodyPart.xPos < previousBodyPart.xPos) {
-            snakeBodyPart.xCoordinate = previousBodyPart.xPos - 31;
-            snakeBodyPart.yCoordinate = previousBodyPart.yPos;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos, "px");
-            snakePart.style.left = "".concat(snakeBodyPart.xPos, "px");
-          } else if (snakeBodyPart.yPos == previousBodyPart.yPos || snakeBodyPart.xPos > previousBodyPart.xPos) {
-            snakeBodyPart.xCoordinate = snakeBodyPart.xPos - 1;
-            snakePart.style.left = "".concat(snakeBodyPart.xPos, "px");
-          } else if (snakeBodyPart.yPos > previousBodyPart.yPos && snakeBodyPart.xPos <= previousBodyPart.xPos) {
-            snakeBodyPart.yCoordinate = snakeBodyPart.yPos - 1;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos);
-          } else if (snakeBodyPart.yPos < previousBodyPart.yPos && snakeBodyPart.xPos <= previousBodyPart.xPos) {
-            snakeBodyPart.yCoordinate = snakeBodyPart.yPos + 1;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos);
-          } else console.log("ERROR - Right lesser");
-        }
-
-        previousBodyPart = snakeBodyPart;
-      }
-    }
-  }
-};
-
-var downFunction = function downFunction() {
-  if (gameIsRunning && downCheck) {
-    var headPosition = head.getBoundingClientRect();
+    previousPartMovement = "right";
+  } else if (downCheck) {
     var headDown = headPosition.top + 1 + "px";
     head.style.top = headDown;
     snakePic.style.transform = "rotate(90deg)";
+    previousPartMovement = "down";
+  }
 
-    if (snakeBodyArr.length > 0) {
-      for (var i = 0; i < snakeBodyArr.length; i++) {
-        var snakePart = document.querySelector(".snake-body-part-".concat(i));
-        var snakeBodyPart = snakeBodyArr[i];
+  return previousPartMovement;
+};
 
-        if (snakeBodyPart == snakeBodyArr[0]) {
-          if (snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos < headPosition.top) {
-            snakeBodyPart.xCoordinate = headPosition.left;
-            snakeBodyPart.yCoordinate = headPosition.top - 31;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos, "px");
-            snakePart.style.left = "".concat(snakeBodyPart.xPos, "px");
-          } else if (snakeBodyPart.xPos == headPosition.left || snakeBodyPart.yPos > headPosition.top) {
-            snakeBodyPart.yCoordinate = snakeBodyPart.yPos - 1;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos, "px");
-          } else if (snakeBodyPart.xPos > headPosition.left && snakeBodyPart.yPos <= headPosition.top) {
-            snakeBodyPart.xCoordinate = snakeBodyPart.xPos - 1;
-            snakePart.style.left = "".concat(snakeBodyPart.xPos);
-          } else if (snakeBodyPart.xPos < headPosition.left && snakeBodyPart.yPos <= headPosition.top) {
-            snakeBodyPart.xCoordinate = snakeBodyPart.xPos + 1;
-            snakePart.style.left = "".concat(snakeBodyPart.xPos);
-          } else console.log("ERROR - Down prime");
-        } else {
-          if (snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos < previousBodyPart.yPos) {
-            snakeBodyPart.xCoordinate = previousBodyPart.xPos;
-            snakeBodyPart.yCoordinate = previousBodyPart.yPos - 31;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos, "px");
-            snakePart.style.left = "".concat(snakeBodyPart.xPos, "px");
-          } else if (snakeBodyPart.xPos == previousBodyPart.xPos || snakeBodyPart.yPos > previousBodyPart.yPos) {
-            snakeBodyPart.yCoordinate = snakeBodyPart.yPos - 1;
-            snakePart.style.top = "".concat(snakeBodyPart.yPos, "px");
-          } else if (snakeBodyPart.xPos > previousBodyPart.xPos && snakeBodyPart.yPos <= previousBodyPart.yPos) {
-            snakeBodyPart.xCoordinate = snakeBodyPart.xPos - 1;
-            snakePart.style.left = "".concat(snakeBodyPart.xPos);
-          } else if (snakeBodyPart.xPos < previousBodyPart.xPos && snakeBodyPart.yPos <= previousBodyPart.yPos) {
-            snakeBodyPart.xCoordinate = snakeBodyPart.xPos + 1;
-            snakePart.style.left = "".concat(snakeBodyPart.xPos);
-          } else console.log("ERROR - Down lesser");
-        }
+var checkSepukuStatus = function checkSepukuStatus(snakeHead, snakeArr) {
+  for (var i = 1; i < snakeArr.length; i++) {
+    var snakeBody = snakeArr[i];
 
-        previousBodyPart = snakeBodyPart;
-      }
+    if (snakeBody.xPos + 30 >= snakeHead.left && snakeBody.xPos + 30 < snakeHead.right && snakeBody.xPos < snakeHead.left && snakeBody.yPos + 30 >= snakeHead.top && snakeBody.yPos <= snakeHead.bottom || snakeBody.xPos <= snakeHead.right && snakeBody.xPos > snakeHead.left && snakeBody.xPos + 30 > snakeHead.right && snakeBody.yPos + 30 >= snakeHead.top && snakeBody.yPos <= snakeHead.bottom || snakeBody.yPos + 30 >= snakeHead.top && snakeBody.yPos + 30 < snakeHead.bottom && snakeBody.yPos < snakeHead.top && snakeBody.xPos <= snakeHead.left && snakeBody.xPos + 30 >= snakeHead.right || snakeBody.yPos <= snakeHead.bottom && snakeBody.yPos > snakeHead.top && snakeBody.yPos + 30 > snakeHead.bottom && snakeBody.xPos + 30 >= snakeHead.right && snakeBody.xPos <= snakeHead.left) {
+      gameOver();
     }
   }
 };
@@ -299,8 +290,8 @@ var gameOver = function gameOver() {
   document.querySelector(".game-info").style.opacity = "0.8";
   document.querySelector(".game-info").innerHTML = "<p>Game Over!</p>";
   restartButton.style.display = "block";
-  head.style.top = "calc(50% - 15px)";
-  head.style.left = "calc(50% - 15px)";
+  head.style.top = "400px";
+  head.style.left = "650px";
   snakeBodyArr = [];
 };
 
@@ -313,8 +304,8 @@ var fruitGenerator = function fruitGenerator() {
   var verticalScreenSize = bottomBound - topBound - 20;
   var xPosition = Math.floor(Math.random() * (horizontalScreenSize - 80)) + 40;
   var yPosition = Math.floor(Math.random() * (verticalScreenSize - 80)) + 40;
-  snack.xCoordinate = xPosition;
-  snack.yCoordinate = yPosition;
+  snack.setXCoordinate = xPosition;
+  snack.setYCoordinate = yPosition;
   gameBox.innerHTML += snack.render();
 };
 
@@ -337,7 +328,6 @@ var fruitGrabbingChecker = function fruitGrabbingChecker() {
   var snakeHeadRight = headRight - leftBound;
 
   if (snakeHeadRight >= fruitLeft && snakeHeadRight < fruitRight && snakeHeadLeft < fruitLeft && snakeHeadBottom >= fruitTop && snakeHeadTop <= fruitBottom || snakeHeadLeft <= fruitRight && snakeHeadLeft > fruitLeft && snakeHeadRight > fruitRight && snakeHeadBottom >= fruitTop && snakeHeadTop <= fruitBottom || snakeHeadBottom >= fruitTop && snakeHeadBottom < fruitBottom && snakeHeadTop < fruitTop && snakeHeadLeft <= fruitLeft && snakeHeadRight >= fruitRight || snakeHeadTop <= fruitBottom && snakeHeadTop > fruitTop && snakeHeadBottom > fruitBottom && snakeHeadRight >= fruitRight && snakeHeadLeft <= fruitLeft) {
-    // console.log(snakeBodyArr);
     score += 100;
     gameScore.innerHTML = "Score: ".concat(score);
     var horizontalScreenSize = rightBound - leftBound - 20;
@@ -347,9 +337,24 @@ var fruitGrabbingChecker = function fruitGrabbingChecker() {
     var fruit = document.querySelector(".fruit");
     fruit.style.top = "".concat(yCo, "px");
     fruit.style.left = "".concat(xCo, "px");
-    snack.xCoordinate = xCo;
-    snack.yCoordinate = yCo;
-    var snakeNewPart = new _SnakeBodyPart["default"](headLeft, headBottom, bodyCount);
+    snack.setXCoordinate = xCo;
+    snack.setYCoordinate = yCo;
+    var snakeNewPart;
+
+    if (snakeBodyArr.length > 0) {
+      if (previousPartMovement == "down") {
+        snakeNewPart = new _SnakeBodyPart["default"](snakeBodyArr[bodyCount - 1].xPos, snakeBodyArr[bodyCount - 1].yPos - 31, bodyCount);
+      } else if (previousPartMovement == "up") {
+        snakeNewPart = new _SnakeBodyPart["default"](snakeBodyArr[bodyCount - 1].xPos, snakeBodyArr[bodyCount - 1].yPos + 31, bodyCount);
+      } else if (previousPartMovement == "left") {
+        snakeNewPart = new _SnakeBodyPart["default"](snakeBodyArr[bodyCount - 1].xPos + 31, snakeBodyArr[bodyCount - 1].yPos, bodyCount);
+      } else if (previousPartMovement == "right") {
+        snakeNewPart = new _SnakeBodyPart["default"](snakeBodyArr[bodyCount - 1].xPos - 31, snakeBodyArr[bodyCount - 1].yPos, bodyCount);
+      }
+    } else {
+      snakeNewPart = new _SnakeBodyPart["default"](headLeft, headBottom, bodyCount);
+    }
+
     gameBox.innerHTML += snakeNewPart.render();
     snakeBodyArr.push(snakeNewPart);
     bodyCount++;
@@ -373,100 +378,10 @@ document.addEventListener("keypress", function (e) {
     rightCheck = true;
   } else ;
 });
-setInterval(fruitGrabbingChecker, 1);
-setInterval(checkGameStatus, 1);
-setInterval(upFunction, 1);
-setInterval(downFunction, 1);
-setInterval(leftFunction, 1);
-setInterval(rightFunction, 1);
+setInterval(gameRunning, 1);
 startButton.addEventListener("click", countdownStart);
-restartButton.addEventListener("click", countdownStart); // fix grown snake 2-D movement.
-// snake self-interaction.
+restartButton.addEventListener("click", countdownStart); // To do:
 // fix fruit restart problems.
-// Extra:
 // clean up code.
 // high score board.
-// media queries
-//  ====================================================================================================================
-//  ====================================================================================================================
-//  ====================================================================================================================
-// if press w:
-// move head up
-// if first bodyPart:
-// if bodyPart.x = head.x && bodyPart.y > head.y:
-// move bodyPart up
-// else if bodyPart.x = head.x || bodyPart.y < head.y:
-// move bodyPart down
-// else if bodyPart.x > head .x && bodyPart.y >= head.y:
-// move bodyPart left
-// else if bodyPart.x < head.x && bodyPart.y >= head.y:
-// move bodyPart right
-// else:
-// if bodyPart.x = previousPart.x && bodyPart.y > previousPart.y:
-// move bodyPart up
-// else if bodyPart.x = previousPart.x || bodyPart.y < previousPart.y:
-// move bodyPart down
-// else if bodyPart.x > previousPart.x && bodyPart.y >= previousPart.y:
-// move bodyPart left
-// else if bodyPart.x < previousPart.x && bodyPart.y >= previousPart.y:
-// move bodyPart right
-// if press a:
-// move head left
-// if first bodyPart:
-// if bodyPart.y = head.y && bodyPart.x > head.x:
-// move bodyPart left
-// else if bodyPart.y = head.y || bodyPart.x < head.x:
-// move bodyPart right
-// else if bodyPart.y > head .y && bodyPart.x >= head.x:
-// move bodyPart up
-// else if bodyPart.y < head.y && bodyPart.x >= head.x:
-// move bodyPart down
-// else:
-// if bodyPart.y = previousPart.y  && bodyPart.x > previousPart.x:
-// move bodyPart left
-// else if bodyPart.y = previousPart.y ||bodyPart.x < previousPart.x:
-// move bodyPart right
-// else if bodyPart.y > previousPart.y && bodyPart.x >= previousPart.x:
-// move bodyPart up
-// else if bodyPart.y < previousPart.y && bodyPart.x >= previousPart.x:
-// move bodyPart down
-// if press s:
-// move head down
-// if first bodyPart:
-// if bodyPart.x = head.x && bodyPart.y < head.y:
-// move bodyPart down
-// else if bodyPart.x = head.x || bodyPart.y > head.y:
-// move bodyPart up
-// else if bodyPart.x > head .x && bodyPart.y <= head.y:
-// move bodyPart left
-// else if bodyPart.x < head.x && bodyPart.y <= head.y:
-// move bodyPart right
-// else:
-// if bodyPart.x = previousPart.x && bodyPart.y < previousPart.y:
-// move bodyPart down
-// else if bodyPart.x = previousPart.x || bodyPart.y > previousPart.y:
-// move bodyPart up
-// else if bodyPart.x > previousPart.x && bodyPart.y <= previousPart.y:
-// move bodyPart left
-// else if bodyPart.x < previousPart.x && bodyPart.y <= previousPart.y:
-// move bodyPart right
-// if press d:
-// move head right.
-// if first bodyPart:
-// if bodyPart.y = head.y && bodyPart.x < head.x:
-// move bodyPart right
-// else if bodyPart.y = head.y || bodyPart.x > head.x:
-// move bodyPart left
-// else if bodyPart.y > head .y && bodyPart.x <= head.x;
-// move bodyPart up
-// else if bodyPart.y < head.y && bodyPart.x <= head.x;
-// move bodyPart down
-// else:
-// if bodyPart.y = previousPart.y && bodyPart.x < previousPart.x:
-// move bodyPart right
-// else if bodyPart.y = previousPart.y || bodyPart.x > previousPart.x:
-// move bodyPart left
-// else if bodyPart.y > previousPart.y && bodyPart.x <= previousPart.x;
-// move bodyPart up
-// else if bodyPart.y < previousPart.y && bodyPart.x <= previousPart.x;
-// move bodyPart down
+// media queries.

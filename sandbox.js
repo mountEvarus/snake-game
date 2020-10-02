@@ -1,5 +1,5 @@
-import Fruit from "./Fruit.js";
-import SnakeBodypart from "./SnakeBodyPart.js";
+import Fruit from "./assets/classes/Fruit.js";
+import SnakeBodypart from "./assets/classes/SnakeBodyPart.js";
 
 // variables.
 const head = document.querySelector(".circle");
@@ -17,9 +17,9 @@ let leftCheck = false;
 var score = 0;
 const snack = new Fruit (0,0);
 let snakeBodyArr = [];
-let previousBodyPart = 0;
 let bodyCount = 0;
 let count;
+let previousPartMovement = "up";
 
 // functions.
 const countdownStart = () => {
@@ -55,200 +55,193 @@ const gameStart = () => {
         }
     }
 }
-const upFunction = () => {
-    if(gameIsRunning && upCheck) {
-        const headPosition = head.getBoundingClientRect();
-        const headUp = headPosition.top - 1  + "px";
-        head.style.top = headUp;
-        snakePic.style.transform = "rotate(-90deg)";
-
+const gameRunning = () => {
+    movementFunction();
+    fruitGrabbingChecker();
+    checkGameStatus();
+}
+const movementFunction = () => {
+    if(gameIsRunning) {
+        primaryCheck()
         if(snakeBodyArr.length > 0) {
+            let headPosition = head.getBoundingClientRect();
+            let previousBodyPart = 0;
             for (let i = 0; i < snakeBodyArr.length; i++) {
-                const snakePart = document.querySelector(`.snake-body-part-${i}`);
                 const snakeBodyPart = snakeBodyArr[i];
-
-                if(snakeBodyPart == snakeBodyArr[0]) {
-                    if(snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos > headPosition.top) {
-                        snakeBodyPart.xCoordinate = headPosition.left;
-                        snakeBodyPart.yCoordinate = headPosition.top + 31;
-                        snakePart.style.top = `${snakeBodyPart.yPos}px`;
-                        snakePart.style.left = `${snakeBodyPart.xPos}px`;
-                    } else if (snakeBodyPart.xPos == headPosition.left || snakeBodyPart.yPos < headPosition.top) {
-                        snakeBodyPart.yCoordinate = snakeBodyPart.yPos + 1;
-                        snakePart.style.top = `${snakeBodyPart.yPos}px`;
-                    } else if(snakeBodyPart.xPos > headPosition.left && snakeBodyPart.yPos >= headPosition.top){
-                        snakeBodyPart.xCoordinate = snakeBodyPart.xPos - 1;
-                        snakePart.style.left = `${snakeBodyPart.xPos}`;
-                    } else if(snakeBodyPart.xPos < headPosition.left && snakeBodyPart.yPos >= headPosition.top){
-                        snakeBodyPart.xCoordinate = snakeBodyPart.xPos + 1;
-                        snakePart.style.left = `${snakeBodyPart.xPos}`;
-                    }  else console.log("ERROR - Up prime");
+                const snakeHTML = document.querySelector(`.snake-body-part-${i}`);
+                if(i === 0) {
+                    if(snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos <= (headPosition.top +31) && previousPartMovement == "up") {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "down";
+                    } else if(snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos > (headPosition.top +31) && previousPartMovement == "up") {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "up";
+                    } else if(snakeBodyPart.xPos > headPosition.left && snakeBodyPart.yPos == headPosition.top && (previousPartMovement == "up" || previousPartMovement == "down")) {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "left";
+                    } else if(snakeBodyPart.xPos < headPosition.left && snakeBodyPart.yPos == headPosition.top && (previousPartMovement == "up" || previousPartMovement == "down")) {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "right";
+                    } else if(snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos >= (headPosition.top -31) && previousPartMovement == "down") {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "up";
+                    } else if(snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos < (headPosition.top -31) && previousPartMovement == "down") {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "down";
+                    } else if(snakeBodyPart.xPos >= (headPosition.left + 31) && snakeBodyPart.yPos == headPosition.top && previousPartMovement == "left") {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "left";
+                    } else if(snakeBodyPart.xPos < (headPosition.left + 31) && snakeBodyPart.yPos == headPosition.top && previousPartMovement == "left") {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "right";
+                    } else if(snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos > headPosition.top && (previousPartMovement == "left" || previousPartMovement == "right")) {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "up";
+                    } else if(snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos < headPosition.top && (previousPartMovement == "left" || previousPartMovement == "right")) {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "down";
+                    } else if(snakeBodyPart.xPos > (headPosition.left - 31) && snakeBodyPart.yPos == headPosition.top && previousPartMovement == "right") {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "left";
+                    } else if(snakeBodyPart.xPos <= (headPosition.left + 31) && snakeBodyPart.yPos == headPosition.top && previousPartMovement == "right") {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "right";
+                    } else if(snakeBodyPart.xPos < headPosition.left && (snakeBodyPart.yPos < headPosition.top || snakeBodyPart.yPos > headPosition.top) && (previousPartMovement == "up" || previousPartMovement == "down")) {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "right";
+                    } else if(snakeBodyPart.xPos > headPosition.left && (snakeBodyPart.yPos < headPosition.top || snakeBodyPart.yPos > headPosition.top) && (previousPartMovement == "up" || previousPartMovement == "down")) {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "left";
+                    } else if((snakeBodyPart.xPos < headPosition.left || snakeBodyPart.xPos > headPosition.left) && snakeBodyPart.yPos < headPosition.top && (previousPartMovement == "left" || previousPartMovement == "right")) {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "down";
+                    } else if((snakeBodyPart.xPos < headPosition.left || snakeBodyPart.xPos > headPosition.left) && snakeBodyPart.yPos > headPosition.top && (previousPartMovement == "left" || previousPartMovement == "right")) {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "up";
+                    }
                 } else {
-                    if(snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos > previousBodyPart.yPos) {
-                        snakeBodyPart.xCoordinate = previousBodyPart.xPos;
-                        snakeBodyPart.yCoordinate =  previousBodyPart.yPos + 31;
-                        snakePart.style.top = `${snakeBodyPart.yPos}px`;
-                        snakePart.style.left = `${snakeBodyPart.xPos}px`;
-                    } else if(snakeBodyPart.xPos == previousBodyPart.xPos || snakeBodyPart.yPos < previousBodyPart.yPos) {
-                        snakeBodyPart.yCoordinate =  snakeBodyPart.yPos + 1;
-                        snakePart.style.top = `${snakeBodyPart.yPos}px`;
-                    }else if(snakeBodyPart.xPos > previousBodyPart.xPos && snakeBodyPart.yPos >= previousBodyPart.yPos){
-                        snakeBodyPart.xCoordinate = snakeBodyPart.xPos - 1;
-                        snakePart.style.left = `${snakeBodyPart.xPos}`;
-                    } else if(snakeBodyPart.xPos < previousBodyPart.xPos && snakeBodyPart.yPos >= previousBodyPart.yPos){
-                        snakeBodyPart.xCoordinate = snakeBodyPart.xPos + 1;
-                        snakePart.style.left = `${snakeBodyPart.xPos}`;
-                    }  else console.log("ERROR - Up lesser");
+                    if(snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos <= (previousBodyPart.yPos) && previousPartMovement == "up") {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "down";
+                    } else if(snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos > (previousBodyPart.yPos) && previousPartMovement == "up") {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "up";
+                    } else if(snakeBodyPart.xPos > previousBodyPart.xPos && snakeBodyPart.yPos == previousBodyPart.yPos && (previousPartMovement == "up" || previousPartMovement == "down")) {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "left";
+                    } else if(snakeBodyPart.xPos < previousBodyPart.xPos && snakeBodyPart.yPos == previousBodyPart.yPos && (previousPartMovement == "up" || previousPartMovement == "down")) {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "right";
+                    } else if(snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos >= (previousBodyPart.yPos -31) && previousPartMovement == "down") {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "up";
+                    } else if(snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos < (previousBodyPart.yPos -31) && previousPartMovement == "down") {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "down";
+                    } else if(snakeBodyPart.xPos >= (previousBodyPart.xPos + 31) && snakeBodyPart.yPos == previousBodyPart.yPos && previousPartMovement == "left") {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "left";
+                    } else if(snakeBodyPart.xPos < (previousBodyPart.xPos + 31) && snakeBodyPart.yPos == previousBodyPart.yPos && previousPartMovement == "left") {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "right";
+                    } else if(snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos > previousBodyPart.yPos && (previousPartMovement == "left" || previousPartMovement == "right")) {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "up";
+                    } else if(snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos < previousBodyPart.yPos && (previousPartMovement == "left" || previousPartMovement == "right")) {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "down";
+                    } else if(snakeBodyPart.xPos > (previousBodyPart.xPos - 31) && snakeBodyPart.yPos == previousBodyPart.yPos && previousPartMovement == "right") {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "left";
+                    } else if(snakeBodyPart.xPos <= (previousBodyPart.xPos + 31) && snakeBodyPart.yPos == previousBodyPart.yPos && previousPartMovement == "right") {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "right";
+                    } else if(snakeBodyPart.xPos < previousBodyPart.xPos && (snakeBodyPart.yPos < previousBodyPart.yPos || snakeBodyPart.yPos > previousBodyPart.yPos) && (previousPartMovement == "up" || previousPartMovement == "down")) {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos + 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "right";
+                    } else if(snakeBodyPart.xPos > previousBodyPart.xPos && (snakeBodyPart.yPos < previousBodyPart.yPos || snakeBodyPart.yPos > previousBodyPart.yPos) && (previousPartMovement == "up" || previousPartMovement == "down")) {
+                        snakeBodyPart.setXCoordinate = snakeBodyPart.xPos - 1;
+                        snakeHTML.style.left = `${snakeBodyPart.xPos}`;
+                        previousPartMovement = "left";
+                    } else if((snakeBodyPart.xPos < previousBodyPart.xPos || snakeBodyPart.xPos > previousBodyPart.xPos) && snakeBodyPart.yPos < previousBodyPart.yPos && (previousPartMovement == "left" || previousPartMovement == "right")) {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos + 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "down";
+                    } else if((snakeBodyPart.xPos < previousBodyPart.xPos || snakeBodyPart.xPos > previousBodyPart.xPos) && snakeBodyPart.yPos > previousBodyPart.yPos && (previousPartMovement == "left" || previousPartMovement == "right")) {
+                        snakeBodyPart.setYCoordinate = snakeBodyPart.yPos - 1;
+                        snakeHTML.style.top = `${snakeBodyPart.yPos}`;
+                        previousPartMovement = "up";
+                    }
+                    checkSepukuStatus(headPosition, snakeBodyArr);
                 }
                 previousBodyPart = snakeBodyPart;
             }
         }
     }
 }
-const leftFunction = () => {
-    if(gameIsRunning && leftCheck) {
-        const headPosition = head.getBoundingClientRect();
-        const headLeft = headPosition.left - 1 + "px";
-        head.style.left = headLeft;
-        snakePic.style.transform = "rotate(-180deg)";
-
-        if(snakeBodyArr.length > 0) {
-            for (let i = 0; i < snakeBodyArr.length; i++) {
-                const snakePart = document.querySelector(`.snake-body-part-${i}`);
-                const snakeBodyPart = snakeBodyArr[i];
-                if(snakeBodyPart == snakeBodyArr[0]) {
-                    if(snakeBodyPart.yPos == headPosition.top && snakeBodyPart.xPos > headPosition.left) {
-                        snakeBodyPart.xCoordinate = headPosition.left + 31;
-                        snakeBodyPart.yCoordinate = headPosition.top;
-                        snakePart.style.top = `${snakeBodyPart.yPos}px`;
-                        snakePart.style.left = `${snakeBodyPart.xPos}px`;
-                    } else if(snakeBodyPart.yPos == headPosition.top || snakeBodyPart.xPos < headPosition.left) {
-                        snakeBodyPart.xCoordinate = snakeBodyPart.xPos + 1;
-                        snakePart.style.left = `${snakeBodyPart.xPos}px`;
-                    } else if(snakeBodyPart.yPos > headPosition.top && snakeBodyPart.xPos >= headPosition.left){
-                        snakeBodyPart.yCoordinate = snakeBodyPart.yPos - 1;
-                        snakePart.style.top = `${snakeBodyPart.yPos}`;
-                    } else if(snakeBodyPart.yPos < headPosition.top && snakeBodyPart.xPos >= headPosition.left){
-                        snakeBodyPart.yCoordinate = snakeBodyPart.yPos + 1;
-                        snakePart.style.top = `${snakeBodyPart.yPos}`;
-                    } else console.log("ERROR - Left prime");
-                } else {
-                    if(snakeBodyPart.yPos == previousBodyPart.yPos && snakeBodyPart.xPos > previousBodyPart.xPos) {
-                        snakeBodyPart.xCoordinate = previousBodyPart.xPos + 31;
-                        snakeBodyPart.yCoordinate = previousBodyPart.yPos;
-                        snakePart.style.top = `${snakeBodyPart.yPos}px`;
-                        snakePart.style.left = `${snakeBodyPart.xPos}px`;
-                    } else if(snakeBodyPart.yPos == previousBodyPart.yPos || snakeBodyPart.xPos < previousBodyPart.xPos) {
-                        snakeBodyPart.xCoordinate = snakeBodyPart.xPos + 1;
-                        snakePart.style.left = `${snakeBodyPart.xPos}px`;
-                    } else if(snakeBodyPart.yPos > previousBodyPart.yPos && snakeBodyPart.xPos >= previousBodyPart.xPos){
-                        snakeBodyPart.yCoordinate = snakeBodyPart.yPos - 1;
-                        snakePart.style.top = `${snakeBodyPart.yPos}`;
-                    } else if(snakeBodyPart.yPos < previousBodyPart.yPos && snakeBodyPart.xPos >= previousBodyPart.xPos){
-                        snakeBodyPart.yCoordinate = snakeBodyPart.yPos + 1;
-                        snakePart.style.top = `${snakeBodyPart.yPos}`;
-                    } else console.log("ERROR - Left lesser");
-                }
-                previousBodyPart = snakeBodyPart;
-            }
-        } 
-    }
-}
-const rightFunction = () => {
-    if(gameIsRunning && rightCheck) {
-        const headPosition = head.getBoundingClientRect();
-        const headRight = headPosition.left + 1 + "px";
-        head.style.left = headRight;
-        snakePic.style.transform = "rotate(0deg)";
-
-        if(snakeBodyArr.length > 0) {
-            for (let i = 0; i < snakeBodyArr.length; i++) {
-                const snakePart = document.querySelector(`.snake-body-part-${i}`);
-                const snakeBodyPart = snakeBodyArr[i];
-                if(snakeBodyPart == snakeBodyArr[0]) {
-                    if(snakeBodyPart.yPos == headPosition.top && snakeBodyPart.xPos < headPosition.left) {
-                        snakeBodyPart.xCoordinate = headPosition.left - 31;
-                        snakeBodyPart.yCoordinate = headPosition.top;
-                        snakePart.style.top = `${snakeBodyPart.yPos}px`;
-                        snakePart.style.left = `${snakeBodyPart.xPos}px`;
-                    } else if(snakeBodyPart.yPos == headPosition.top || snakeBodyPart.xPos > headPosition.left) {
-                        snakeBodyPart.xCoordinate = snakeBodyPart.xPos - 1;
-                        snakePart.style.left = `${snakeBodyPart.xPos}px`;
-                    } else if(snakeBodyPart.yPos > headPosition.top && snakeBodyPart.xPos <= headPosition.left){
-                        snakeBodyPart.yCoordinate = snakeBodyPart.yPos - 1;
-                        snakePart.style.top = `${snakeBodyPart.yPos}`;
-                    } else if(snakeBodyPart.yPos < headPosition.top && snakeBodyPart.xPos <= headPosition.left){
-                        snakeBodyPart.yCoordinate = snakeBodyPart.yPos + 1;
-                        snakePart.style.top = `${snakeBodyPart.yPos}`;
-                    } else console.log("ERROR - Right prime");
-                } else {
-                    if(snakeBodyPart.yPos == previousBodyPart.yPos && snakeBodyPart.xPos < previousBodyPart.xPos) {
-                        snakeBodyPart.xCoordinate = previousBodyPart.xPos - 31;
-                        snakeBodyPart.yCoordinate = previousBodyPart.yPos;
-                        snakePart.style.top = `${snakeBodyPart.yPos}px`;
-                        snakePart.style.left = `${snakeBodyPart.xPos}px`;
-                    } else if(snakeBodyPart.yPos == previousBodyPart.yPos || snakeBodyPart.xPos > previousBodyPart.xPos) {
-                        snakeBodyPart.xCoordinate = snakeBodyPart.xPos - 1;
-                        snakePart.style.left = `${snakeBodyPart.xPos}px`;
-                    } else if(snakeBodyPart.yPos > previousBodyPart.yPos && snakeBodyPart.xPos <= previousBodyPart.xPos){
-                        snakeBodyPart.yCoordinate = snakeBodyPart.yPos - 1;
-                        snakePart.style.top = `${snakeBodyPart.yPos}`;
-                    } else if(snakeBodyPart.yPos < previousBodyPart.yPos && snakeBodyPart.xPos <= previousBodyPart.xPos){
-                        snakeBodyPart.yCoordinate = snakeBodyPart.yPos + 1;
-                        snakePart.style.top = `${snakeBodyPart.yPos}`;
-                    } else console.log("ERROR - Right lesser");
-                }
-                previousBodyPart = snakeBodyPart;
-            }
+const primaryCheck = () => {
+        previousPartMovement;
+        let headPosition = head.getBoundingClientRect();
+        if(upCheck) {
+            const headUp = headPosition.top - 1  + "px";
+            head.style.top = headUp;
+            snakePic.style.transform = "rotate(-90deg)";
+            previousPartMovement = "up";
+        } else if(leftCheck) {
+            const headLeft = headPosition.left - 1 + "px";
+            head.style.left = headLeft;
+            snakePic.style.transform = "rotate(-180deg)";
+            previousPartMovement = "left";
+        } else if (rightCheck) {
+            const headRight = headPosition.left + 1 + "px";
+            head.style.left = headRight;
+            snakePic.style.transform = "rotate(0deg)";
+            previousPartMovement = "right";
+        } else if (downCheck) {
+            const headDown = headPosition.top + 1 + "px";
+            head.style.top = headDown;
+            snakePic.style.transform = "rotate(90deg)";
+            previousPartMovement = "down";
         }
-    }
+        return previousPartMovement;
 }
-const downFunction = () => {
-    if(gameIsRunning && downCheck) {
-        const headPosition = head.getBoundingClientRect();
-        const headDown = headPosition.top + 1 + "px";
-        head.style.top = headDown;
-        snakePic.style.transform = "rotate(90deg)";
-
-        if(snakeBodyArr.length > 0) {
-            for (let i = 0; i < snakeBodyArr.length; i++) {
-                const snakePart = document.querySelector(`.snake-body-part-${i}`);
-                const snakeBodyPart = snakeBodyArr[i];
-                if(snakeBodyPart == snakeBodyArr[0]) {
-                    if(snakeBodyPart.xPos == headPosition.left && snakeBodyPart.yPos < headPosition.top) {
-                        snakeBodyPart.xCoordinate = headPosition.left;
-                        snakeBodyPart.yCoordinate = headPosition.top - 31;
-                        snakePart.style.top = `${snakeBodyPart.yPos}px`;
-                        snakePart.style.left = `${snakeBodyPart.xPos}px`;
-                    } else if(snakeBodyPart.xPos == headPosition.left || snakeBodyPart.yPos > headPosition.top) {
-                        snakeBodyPart.yCoordinate = snakeBodyPart.yPos - 1;
-                        snakePart.style.top = `${snakeBodyPart.yPos}px`;
-                    }else if(snakeBodyPart.xPos > headPosition.left && snakeBodyPart.yPos <= headPosition.top){
-                        snakeBodyPart.xCoordinate = snakeBodyPart.xPos - 1;
-                        snakePart.style.left = `${snakeBodyPart.xPos}`;
-                    } else if(snakeBodyPart.xPos < headPosition.left && snakeBodyPart.yPos <= headPosition.top){
-                        snakeBodyPart.xCoordinate = snakeBodyPart.xPos + 1;
-                        snakePart.style.left = `${snakeBodyPart.xPos}`;
-                    } else console.log("ERROR - Down prime");
-                } else {
-                    if(snakeBodyPart.xPos == previousBodyPart.xPos && snakeBodyPart.yPos < previousBodyPart.yPos) {
-                        snakeBodyPart.xCoordinate = previousBodyPart.xPos;
-                        snakeBodyPart.yCoordinate =  previousBodyPart.yPos - 31;
-                        snakePart.style.top = `${snakeBodyPart.yPos}px`;
-                        snakePart.style.left = `${snakeBodyPart.xPos}px`;
-                    } else if(snakeBodyPart.xPos == previousBodyPart.xPos || snakeBodyPart.yPos > previousBodyPart.yPos) {
-                        snakeBodyPart.yCoordinate =  snakeBodyPart.yPos - 1;
-                        snakePart.style.top = `${snakeBodyPart.yPos}px`;
-                    } else if(snakeBodyPart.xPos > previousBodyPart.xPos && snakeBodyPart.yPos <= previousBodyPart.yPos){
-                        snakeBodyPart.xCoordinate = snakeBodyPart.xPos - 1;
-                        snakePart.style.left = `${snakeBodyPart.xPos}`;
-                    } else if(snakeBodyPart.xPos < previousBodyPart.xPos && snakeBodyPart.yPos <= previousBodyPart.yPos){
-                        snakeBodyPart.xCoordinate = snakeBodyPart.xPos + 1;
-                        snakePart.style.left = `${snakeBodyPart.xPos}`;
-                    } else console.log("ERROR - Down lesser");
-                }
-                previousBodyPart = snakeBodyPart;
-            }
+const checkSepukuStatus = (snakeHead, snakeArr) => {
+    for (let i = 1; i < snakeArr.length; i++) {
+        const snakeBody = snakeArr[i];
+    if((snakeBody.xPos + 30 >= snakeHead.left && snakeBody.xPos + 30 < snakeHead.right && snakeBody.xPos < snakeHead.left && snakeBody.yPos + 30 >= snakeHead.top && snakeBody.yPos <= snakeHead.bottom) 
+    || (snakeBody.xPos <= snakeHead.right && snakeBody.xPos > snakeHead.left && snakeBody.xPos + 30 > snakeHead.right && snakeBody.yPos + 30 >= snakeHead.top && snakeBody.yPos <= snakeHead.bottom) 
+    || (snakeBody.yPos + 30 >= snakeHead.top && snakeBody.yPos + 30 < snakeHead.bottom && snakeBody.yPos < snakeHead.top && snakeBody.xPos <= snakeHead.left && snakeBody.xPos + 30 >= snakeHead.right) 
+    || (snakeBody.yPos <= snakeHead.bottom && snakeBody.yPos > snakeHead.top && snakeBody.yPos + 30 > snakeHead.bottom && snakeBody.xPos + 30 >= snakeHead.right && snakeBody.xPos <= snakeHead.left)) {
+            gameOver();
         }
     }
 }
@@ -273,7 +266,6 @@ const checkGameStatus = () => {
             gameOver();
         } else;
     }
-    
 }
 const gameOver = () => {
     gameIsRunning = false;
@@ -281,8 +273,8 @@ const gameOver = () => {
     document.querySelector(".game-info").style.opacity = "0.8";
     document.querySelector(".game-info").innerHTML = `<p>Game Over!</p>`;
     restartButton.style.display = "block";
-    head.style.top = "calc(50% - 15px)";
-    head.style.left = "calc(50% - 15px)";
+    head.style.top = "400px";
+    head.style.left = "650px";
     snakeBodyArr = [];
 }
 const fruitGenerator = () => {
@@ -295,17 +287,15 @@ const fruitGenerator = () => {
 
     const xPosition = Math.floor(Math.random() * (horizontalScreenSize - 80)) + 40;
     const yPosition = Math.floor(Math.random() * (verticalScreenSize - 80)) + 40;
-    snack.xCoordinate = xPosition;
-    snack.yCoordinate = yPosition;
+    snack.setXCoordinate = xPosition;
+    snack.setYCoordinate = yPosition;
     gameBox.innerHTML += snack.render();
-    
 }
 const fruitGrabbingChecker = () => {
     const fruitLeft = snack.xPos;
     const fruitRight = snack.xPos + 20;
     const fruitTop = snack.yPos;
     const fruitBottom = snack.yPos + 20;
-
     const headTop = head.getBoundingClientRect().top;
     const headRight = head.getBoundingClientRect().right;
     const headBottom = head.getBoundingClientRect().bottom;
@@ -324,10 +314,8 @@ const fruitGrabbingChecker = () => {
     || (snakeHeadLeft <= fruitRight && snakeHeadLeft > fruitLeft && snakeHeadRight > fruitRight && snakeHeadBottom >= fruitTop && snakeHeadTop <= fruitBottom) 
     || (snakeHeadBottom >= fruitTop && snakeHeadBottom < fruitBottom && snakeHeadTop < fruitTop && snakeHeadLeft <= fruitLeft && snakeHeadRight >= fruitRight) 
     || (snakeHeadTop <= fruitBottom && snakeHeadTop > fruitTop && snakeHeadBottom > fruitBottom && snakeHeadRight >= fruitRight && snakeHeadLeft <= fruitLeft)) {
-        // console.log(snakeBodyArr);
         score += 100;
         gameScore.innerHTML = `Score: ${score}`;
-
         const horizontalScreenSize = rightBound - leftBound - 20;
         const verticalScreenSize = bottomBound - topBound - 20;
         const xCo = Math.floor(Math.random() * (horizontalScreenSize - 80)) + 40;
@@ -336,10 +324,23 @@ const fruitGrabbingChecker = () => {
         const fruit = document.querySelector(".fruit");
         fruit.style.top = `${yCo}px`;
         fruit.style.left = `${xCo}px`;
-        snack.xCoordinate = xCo;
-        snack.yCoordinate = yCo;
+        snack.setXCoordinate = xCo;
+        snack.setYCoordinate = yCo;
 
-        const snakeNewPart = new SnakeBodypart(headLeft, headBottom, bodyCount);
+        let snakeNewPart;
+        if(snakeBodyArr.length > 0) {
+            if(previousPartMovement == "down") {
+                snakeNewPart = new SnakeBodypart((snakeBodyArr[bodyCount-1].xPos), (snakeBodyArr[bodyCount-1].yPos - 31), bodyCount); 
+            } else if(previousPartMovement == "up") {
+                snakeNewPart = new SnakeBodypart((snakeBodyArr[bodyCount-1].xPos), (snakeBodyArr[bodyCount-1].yPos + 31), bodyCount); 
+            } else if(previousPartMovement == "left") {
+                snakeNewPart = new SnakeBodypart((snakeBodyArr[bodyCount-1].xPos + 31), (snakeBodyArr[bodyCount-1].yPos), bodyCount); 
+            } else if(previousPartMovement == "right") {
+                snakeNewPart = new SnakeBodypart((snakeBodyArr[bodyCount-1].xPos - 31), (snakeBodyArr[bodyCount-1].yPos), bodyCount); 
+            }
+        } else {
+            snakeNewPart = new SnakeBodypart((headLeft), (headBottom), bodyCount);
+        }
         gameBox.innerHTML += snakeNewPart.render();
         snakeBodyArr.push(snakeNewPart);
         bodyCount++;
@@ -362,115 +363,12 @@ document.addEventListener("keypress", function(e) {
         rightCheck = true;
     } else;
 });
-setInterval(fruitGrabbingChecker, 1);
-setInterval(checkGameStatus, 1);
-setInterval(upFunction, 1);
-setInterval(downFunction, 1);
-setInterval(leftFunction, 1);
-setInterval(rightFunction, 1);
-startButton.addEventListener(("click"), countdownStart);
+setInterval(gameRunning, 1);
+startButton.addEventListener("click", countdownStart);
 restartButton.addEventListener("click", countdownStart);
 
-// fix grown snake 2-D movement.
-// snake self-interaction.
+// To do:
 // fix fruit restart problems.
-
-// Extra:
 // clean up code.
 // high score board.
-// media queries
-
-//  ====================================================================================================================
-//  ====================================================================================================================
-//  ====================================================================================================================
-
-// if press w:
-    // move head up
-
-    // if first bodyPart:
-        // if bodyPart.x = head.x && bodyPart.y > head.y:
-            // move bodyPart up
-        // else if bodyPart.x = head.x || bodyPart.y < head.y:
-            // move bodyPart down
-        // else if bodyPart.x > head .x && bodyPart.y >= head.y:
-            // move bodyPart left
-        // else if bodyPart.x < head.x && bodyPart.y >= head.y:
-            // move bodyPart right
-    // else:
-        // if bodyPart.x = previousPart.x && bodyPart.y > previousPart.y:
-            // move bodyPart up
-        // else if bodyPart.x = previousPart.x || bodyPart.y < previousPart.y:
-            // move bodyPart down
-        // else if bodyPart.x > previousPart.x && bodyPart.y >= previousPart.y:
-            // move bodyPart left
-        // else if bodyPart.x < previousPart.x && bodyPart.y >= previousPart.y:
-            // move bodyPart right
-
-
-// if press a:
-    // move head left
-
-    // if first bodyPart:
-        // if bodyPart.y = head.y && bodyPart.x > head.x:
-            // move bodyPart left
-        // else if bodyPart.y = head.y || bodyPart.x < head.x:
-            // move bodyPart right
-        // else if bodyPart.y > head .y && bodyPart.x >= head.x:
-            // move bodyPart up
-        // else if bodyPart.y < head.y && bodyPart.x >= head.x:
-            // move bodyPart down
-    // else:
-        // if bodyPart.y = previousPart.y  && bodyPart.x > previousPart.x:
-            // move bodyPart left
-        // else if bodyPart.y = previousPart.y ||bodyPart.x < previousPart.x:
-            // move bodyPart right
-        // else if bodyPart.y > previousPart.y && bodyPart.x >= previousPart.x:
-            // move bodyPart up
-        // else if bodyPart.y < previousPart.y && bodyPart.x >= previousPart.x:
-            // move bodyPart down
-
-
-// if press s:
-    // move head down
-
-    // if first bodyPart:
-        // if bodyPart.x = head.x && bodyPart.y < head.y:
-            // move bodyPart down
-        // else if bodyPart.x = head.x || bodyPart.y > head.y:
-            // move bodyPart up
-        // else if bodyPart.x > head .x && bodyPart.y <= head.y:
-            // move bodyPart left
-        // else if bodyPart.x < head.x && bodyPart.y <= head.y:
-            // move bodyPart right
-    // else:
-        // if bodyPart.x = previousPart.x && bodyPart.y < previousPart.y:
-            // move bodyPart down
-        // else if bodyPart.x = previousPart.x || bodyPart.y > previousPart.y:
-            // move bodyPart up
-        // else if bodyPart.x > previousPart.x && bodyPart.y <= previousPart.y:
-            // move bodyPart left
-        // else if bodyPart.x < previousPart.x && bodyPart.y <= previousPart.y:
-            // move bodyPart right
-
-
-// if press d:
-    // move head right.
-
-    // if first bodyPart:
-        // if bodyPart.y = head.y && bodyPart.x < head.x:
-            // move bodyPart right
-        // else if bodyPart.y = head.y || bodyPart.x > head.x:
-            // move bodyPart left
-        // else if bodyPart.y > head .y && bodyPart.x <= head.x;
-            // move bodyPart up
-        // else if bodyPart.y < head.y && bodyPart.x <= head.x;
-            // move bodyPart down
-    // else:
-        // if bodyPart.y = previousPart.y && bodyPart.x < previousPart.x:
-            // move bodyPart right
-        // else if bodyPart.y = previousPart.y || bodyPart.x > previousPart.x:
-            // move bodyPart left
-        // else if bodyPart.y > previousPart.y && bodyPart.x <= previousPart.x;
-            // move bodyPart up
-        // else if bodyPart.y < previousPart.y && bodyPart.x <= previousPart.x;
-            // move bodyPart down
+// media queries.

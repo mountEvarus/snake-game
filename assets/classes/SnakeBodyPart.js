@@ -1,0 +1,19 @@
+class SnakeBodyPart {
+    constructor(xPos, yPos, count) {
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.count = count;
+    }
+    render() {
+        return `
+        <div class=snake-body-part-${this.count} style="border-radius: 50%; display: inline-block; background-color: #96be62; width: 30px; height: 30px; position: absolute; top: ${this.yPos}; left: ${this.xPos}"></div>
+        `;
+    }
+    set setXCoordinate(xCoord) {
+        this.xPos = xCoord;
+    }
+    set setYCoordinate(yCoord) {
+        this.yPos = yCoord;
+    }
+}
+export default SnakeBodyPart;
