@@ -293,6 +293,7 @@ var gameOver = function gameOver() {
   head.style.top = "400px";
   head.style.left = "650px";
   snakeBodyArr = [];
+  bodyCount = 0;
 };
 
 var fruitGenerator = function fruitGenerator() {
@@ -353,6 +354,7 @@ var fruitGrabbingChecker = function fruitGrabbingChecker() {
       }
     } else {
       snakeNewPart = new _SnakeBodyPart["default"](headLeft, headBottom, bodyCount);
+      console.log(snakeNewPart);
     }
 
     gameBox.innerHTML += snakeNewPart.render();

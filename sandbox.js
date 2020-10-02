@@ -276,6 +276,7 @@ const gameOver = () => {
     head.style.top = "400px";
     head.style.left = "650px";
     snakeBodyArr = [];
+    bodyCount = 0;
 }
 const fruitGenerator = () => {
     const topBound = gameBox.getBoundingClientRect().top;
@@ -340,6 +341,7 @@ const fruitGrabbingChecker = () => {
             }
         } else {
             snakeNewPart = new SnakeBodypart((headLeft), (headBottom), bodyCount);
+            console.log(snakeNewPart);
         }
         gameBox.innerHTML += snakeNewPart.render();
         snakeBodyArr.push(snakeNewPart);
