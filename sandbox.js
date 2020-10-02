@@ -341,7 +341,6 @@ const fruitGrabbingChecker = () => {
             }
         } else {
             snakeNewPart = new SnakeBodypart((headLeft), (headBottom), bodyCount);
-            console.log(snakeNewPart);
         }
         gameBox.innerHTML += snakeNewPart.render();
         snakeBodyArr.push(snakeNewPart);
@@ -370,7 +369,6 @@ startButton.addEventListener("click", countdownStart);
 restartButton.addEventListener("click", countdownStart);
 
 // To do:
-// fix fruit restart problems.
 // clean up code.
 // high score board.
 // media queries.

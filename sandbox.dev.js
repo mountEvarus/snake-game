@@ -354,7 +354,6 @@ var fruitGrabbingChecker = function fruitGrabbingChecker() {
       }
     } else {
       snakeNewPart = new _SnakeBodyPart["default"](headLeft, headBottom, bodyCount);
-      console.log(snakeNewPart);
     }
 
     gameBox.innerHTML += snakeNewPart.render();
@@ -383,7 +382,6 @@ document.addEventListener("keypress", function (e) {
 setInterval(gameRunning, 1);
 startButton.addEventListener("click", countdownStart);
 restartButton.addEventListener("click", countdownStart); // To do:
-// fix fruit restart problems.
 // clean up code.
 // high score board.
 // media queries.
